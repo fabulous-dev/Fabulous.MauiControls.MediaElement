@@ -13,7 +13,6 @@ The most basic functionality of the `MediaElement` works well on Android and iOS
 
 #### TODO
 - Implement functionality/methods to control the media element externally/programatically i.e. from outside of the built-in UI controls of the media element (https://learn.microsoft.com/en-us/dotnet/communitytoolkit/maui/views/mediaelement#methods).
-- Look into `heightRequest` and `widthRequest`: They come from `Microsoft.Maui.Controls.VisualElement` so there is probably a better way to access them. Maybe they need implementing here?: https://github.com/fabulous-dev/Fabulous.MauiControls/blob/af72f7f827444e09682df012f3c703856560afba/src/Fabulous.MauiControls/Views/_VisualElement.fs
 - Use a `MediaSource` type instead of string for the `Source` property?
 - Implement Events (https://learn.microsoft.com/en-us/dotnet/communitytoolkit/maui/views/mediaelement#events)?
 - Docs
@@ -53,7 +52,8 @@ We reported the issue on the Community Toolkit repository: https://github.com/Co
 
 ## Using the MediaElement 
 
-TODO: write proper docs here
+TODO: write proper docs here.
+Please see the `HelloMediaElement` sample app to see a working example.
 
 ### Accessing read-only bindable properties
 
@@ -74,6 +74,10 @@ let view model =
         .reference(mediaElementRef)
     }
 ```
+
+### Accessing the `widthRequest` and `heightRequest` properties
+
+These have just been renamed `width` and `height` in Fabulous, for convenience.
 
 ## Other useful links:
 - [The official Fabulous website](https://fabulous.dev)

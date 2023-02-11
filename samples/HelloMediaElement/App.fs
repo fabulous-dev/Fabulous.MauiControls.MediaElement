@@ -46,8 +46,8 @@ module App =
 
                         MediaElement()
                             .source("https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4")
-                            .heightRequest(300)
-                            .widthRequest(400)
+                            .height(300)
+                            .width(400)
                             .shouldAutoPlay(true)
 
                     })
