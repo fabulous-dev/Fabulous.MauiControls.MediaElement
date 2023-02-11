@@ -33,15 +33,14 @@ module MediaElement =
 [<AutoOpen>]
 module MediaElementBuilders =
     type Fabulous.Maui.View with
-        
+       
+        /// <summary>MediaElement is a cross-platform control for playing video and audio.</summary> 
         [<Extension>] 
         static member MediaElement() =
             WidgetBuilder<'msg, IFabMediaElement>(MediaElement.WidgetKey, AttributesBundle(StackList.empty(), ValueNone, ValueNone))
         
-        /// <summary>The MediaElement control is a cross-platform view for...
-        /// TODO: finish summary
-        /// </summary>
-        /// <param name ="source"></param> 
+        /// <summary>MediaElement is a cross-platform control for playing video and audio.</summary>
+        /// <param name ="source">The source of the media loaded into the control.</param> 
         [<Extension>]
         static member inline MediaElement<'msg>(source: string) =
             WidgetBuilder<'msg, IFabMediaElement>(MediaElement.WidgetKey, MediaElement.Source.WithValue(source))

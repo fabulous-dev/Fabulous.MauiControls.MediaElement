@@ -52,8 +52,11 @@ We reported the issue on the Community Toolkit repository: https://github.com/Co
 
 ## Using the MediaElement 
 
-TODO: write proper docs here.
-Please see the `HelloMediaElement` sample app to see a working example.
+MediaElement is a cross-platform control for playing video and audio. You can find all the details about this control on the [.NET MAUI Community Toolkit MediaElement documentation](https://learn.microsoft.com/en-us/dotnet/communitytoolkit/maui/views/mediaelement).
+
+Please see the `HelloMediaElement` sample app in this repo to see a working example.
+
+TODO: add usage section, similar to the corresponding section in Maps.
 
 ### Accessing read-only bindable properties
 
