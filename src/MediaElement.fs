@@ -52,9 +52,9 @@ type MediaElementModifiers =
     static member inline aspect(this: WidgetBuilder<'msg, #IFabMediaElement>, value: Aspect) =
         this.AddScalar(MediaElement.Aspect.WithValue(value))
      
-    // [<Extension>]
-    // static member inline heightRequest(this: WidgetBuilder<'msg, #IFabMediaElement>, value: float) =
-    //     this.AddScalar(MediaElement.HeightRequest.WithValue(value))
+    [<Extension>]
+    static member inline heightRequest(this: WidgetBuilder<'msg, #IFabMediaElement>, value: float) =
+        this.AddScalar(MediaElement.HeightRequest.WithValue(value))
 
     [<Extension>]
     static member inline shouldAutoPlay(this: WidgetBuilder<'msg, #IFabMediaElement>, value: bool) =
@@ -80,9 +80,9 @@ type MediaElementModifiers =
     static member inline volume(this: WidgetBuilder<'msg, #IFabMediaElement>, value: float) =
         this.AddScalar(MediaElement.Volume.WithValue(value))
 
-    // [<Extension>]
-    // static member inline widthRequest(this: WidgetBuilder<'msg, #IFabMediaElement>, value: float) =
-    //     this.AddScalar(MediaElement.WidthRequest.WithValue(value))
+    [<Extension>]
+    static member inline widthRequest(this: WidgetBuilder<'msg, #IFabMediaElement>, value: float) =
+        this.AddScalar(MediaElement.WidthRequest.WithValue(value))
 
     /// <summary>Link a ViewRef to access the direct MediaElement control instance</summary>
     /// <param name="this">Current widget</param>

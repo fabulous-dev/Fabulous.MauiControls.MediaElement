@@ -45,8 +45,8 @@ module App =
                             .centerTextHorizontal()
 
                         MediaElement("https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4")
-                            // .heightRequest(300)
-                            // .widthRequest(400)
+                            .heightRequest(300)
+                            .widthRequest(400)
                             .shouldAutoPlay(true)
                         
                         let text =
