@@ -13,6 +13,7 @@ The most basic functionality of the Media Element works well on Android and iOS 
 
 #### TODO
 - Rework API - Source should probably not be required since it is not this way in the original Community Toolkit implementation. This is probably to handle the case when you dont know the media source upon first load.
+- Look into MediaElement.HeightRequestProperty and WidthRequestProperty. They come from Microsoft.Maui.Controls.VisualElement so there is probably a better way to access them.
 - Implement functionality/methods to control the media element externally/programatically i.e. from outside of the built-in UI controls of the media element.
 - Events?
 - Docs

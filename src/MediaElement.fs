@@ -15,7 +15,7 @@ module MediaElement =
      
     let Aspect = Attributes.defineBindableEnum<Aspect> MediaElement.AspectProperty
     
-    let HeightRequest = Attributes.defineBindableFloat MediaElement.HeightRequestProperty // TODO: should this be here?
+    let HeightRequest = Attributes.defineBindableFloat MediaElement.HeightRequestProperty // TODO: This probably shouldn't be here (it comes from Microsoft.Maui.Controls.VisualElement)
 
     let ShouldAutoPlay = Attributes.defineBindableBool MediaElement.ShouldAutoPlayProperty 
 
@@ -31,7 +31,7 @@ module MediaElement =
 
     let Volume = Attributes.defineBindableFloat MediaElement.VolumeProperty
     
-    let WidthRequest = Attributes.defineBindableFloat MediaElement.WidthRequestProperty // TODO: should this be here?
+    let WidthRequest = Attributes.defineBindableFloat MediaElement.WidthRequestProperty // TODO: This probably shouldn't be here (it comes from Microsoft.Maui.Controls.VisualElement)
 
 
 [<AutoOpen>]
@@ -52,9 +52,9 @@ type MediaElementModifiers =
     static member inline aspect(this: WidgetBuilder<'msg, #IFabMediaElement>, value: Aspect) =
         this.AddScalar(MediaElement.Aspect.WithValue(value))
      
-    [<Extension>]
-    static member inline heightRequest(this: WidgetBuilder<'msg, #IFabMediaElement>, value: float) =
-        this.AddScalar(MediaElement.HeightRequest.WithValue(value))
+    // [<Extension>]
+    // static member inline heightRequest(this: WidgetBuilder<'msg, #IFabMediaElement>, value: float) =
+    //     this.AddScalar(MediaElement.HeightRequest.WithValue(value))
 
     [<Extension>]
     static member inline shouldAutoPlay(this: WidgetBuilder<'msg, #IFabMediaElement>, value: bool) =
@@ -80,9 +80,9 @@ type MediaElementModifiers =
     static member inline volume(this: WidgetBuilder<'msg, #IFabMediaElement>, value: float) =
         this.AddScalar(MediaElement.Volume.WithValue(value))
 
-    [<Extension>]
-    static member inline widthRequest(this: WidgetBuilder<'msg, #IFabMediaElement>, value: float) =
-        this.AddScalar(MediaElement.WidthRequest.WithValue(value))
+    // [<Extension>]
+    // static member inline widthRequest(this: WidgetBuilder<'msg, #IFabMediaElement>, value: float) =
+    //     this.AddScalar(MediaElement.WidthRequest.WithValue(value))
 
     /// <summary>Link a ViewRef to access the direct MediaElement control instance</summary>
     /// <param name="this">Current widget</param>
