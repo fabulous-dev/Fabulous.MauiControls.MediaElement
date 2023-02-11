@@ -3,16 +3,17 @@
 open System.Runtime.CompilerServices
 open CommunityToolkit.Maui.Views
 open Fabulous
+open Fabulous.StackAllocatedCollections.StackList
 open Microsoft.Maui
 open Fabulous.Maui
 
 type IFabMediaElement =
     inherit IFabView
+    inherit IFabVisualElement
 
 module MediaElement =
     let WidgetKey = Widgets.register<MediaElement>()
     
-     
     let Aspect = Attributes.defineBindableEnum<Aspect> MediaElement.AspectProperty
     
     let HeightRequest = Attributes.defineBindableFloat MediaElement.HeightRequestProperty // TODO: This probably shouldn't be here (it comes from Microsoft.Maui.Controls.VisualElement)
@@ -37,9 +38,13 @@ module MediaElement =
 [<AutoOpen>]
 module MediaElementBuilders =
     type Fabulous.Maui.View with
-
+        
+        [<Extension>] 
+        static member MediaElement() =
+            WidgetBuilder<'msg, IFabMediaElement>(MediaElement.WidgetKey, AttributesBundle(StackList.empty(), ValueNone, ValueNone))
+        
         /// <summary>The MediaElement control is a cross-platform view for... TODO: finish summary</summary>
-        /// <param name ="source"></param> TODO: do we want to make source a required parameter (in C# version MediaElement works without a source set)?
+        /// <param name ="source"></param> 
         [<Extension>]
         static member inline MediaElement<'msg>(source: string) =
             WidgetBuilder<'msg, IFabMediaElement>(MediaElement.WidgetKey, MediaElement.Source.WithValue(source))
@@ -72,6 +77,10 @@ type MediaElementModifiers =
     static member inline shouldShowPlaybackControls(this: WidgetBuilder<'msg, #IFabMediaElement>, value: bool) =
         this.AddScalar(MediaElement.ShouldShowPlaybackControls.WithValue(value))
 
+    [<Extension>]
+    static member inline source(this: WidgetBuilder<'msg, #IFabMediaElement>, value: string) =
+        this.AddScalar(MediaElement.Source.WithValue(value))
+        
     [<Extension>]
     static member inline speed(this: WidgetBuilder<'msg, #IFabMediaElement>, value: float) =
         this.AddScalar(MediaElement.Speed.WithValue(value))

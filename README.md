@@ -5,17 +5,17 @@ Fabulous.MauiControls implementation of https://learn.microsoft.com/en-us/dotnet
 ### Status
 
 #### Summary
-The most basic functionality of the Media Element works well on Android and iOS (with a workaround for a bug in the CommunityToolkit on iOS - see below).
+The most basic functionality of the `MediaElement` works well on Android and iOS (with a workaround for a bug in the CommunityToolkit on iOS - see below).
 
 #### Done
 - All (non read-only) bindable properties of the MediaElement have been implemented (https://learn.microsoft.com/en-us/dotnet/communitytoolkit/maui/views/mediaelement#properties)
-- Read-only bindable properties can be accessed through the reference property via a ViewRef (TODO: explain how to do this)
+- Read-only bindable properties can be accessed through the reference property via a `ViewRef` (see below)
 
 #### TODO
-- Rework API - Source should probably not be required since it is not this way in the original Community Toolkit implementation. This is probably to handle the case when you dont know the media source upon first load.
-- Look into MediaElement.HeightRequestProperty and WidthRequestProperty. They come from Microsoft.Maui.Controls.VisualElement so there is probably a better way to access them.
-- Implement functionality/methods to control the media element externally/programatically i.e. from outside of the built-in UI controls of the media element.
-- Events?
+- Implement functionality/methods to control the media element externally/programatically i.e. from outside of the built-in UI controls of the media element (https://learn.microsoft.com/en-us/dotnet/communitytoolkit/maui/views/mediaelement#methods).
+- Look into `heightRequest` and `widthRequest`: They come from `Microsoft.Maui.Controls.VisualElement` so there is probably a better way to access them. Maybe they need implementing here?: https://github.com/fabulous-dev/Fabulous.MauiControls/blob/af72f7f827444e09682df012f3c703856560afba/src/Fabulous.MauiControls/Views/_VisualElement.fs
+- Use a `MediaSource` type instead of string for the `Source` property?
+- Implement Events (https://learn.microsoft.com/en-us/dotnet/communitytoolkit/maui/views/mediaelement#events)?
 - Docs
 - More examples
 
@@ -23,9 +23,9 @@ The most basic functionality of the Media Element works well on Android and iOS 
 
 Currently doesn't work as expected on iOS because of issue on iOS due to bug in Community Toolkit's MediaElement. 
 
-In particular, when the MediaElement is added to the initial view, it will crash on iOS because it's expecting some initialization process that comes later in the lifecycle.
+In particular, when the `MediaElement` is added to the initial view, it will crash on iOS because it's expecting some initialization process that comes later in the lifecycle.
 
-A workaround is to add the MediaElement later.
+A workaround is to add the `MediaElement` later.
 
 ```fsharp
 type Msg = AppLoaded
@@ -51,6 +51,29 @@ let view model =
 
 We reported the issue on the Community Toolkit repository: https://github.com/CommunityToolkit/Maui/issues/959
 
+## Using the MediaElement 
+
+TODO: write proper docs here
+
+### Accessing read-only bindable properties
+
+You can access read-only bindable properties of the media element as follows:
+
+```fsharp
+let mediaElementRef = ViewRef<MediaElement>()
+
+let update msg model =
+    | Msg ->
+    mediaElementRef.Value.Duration // Here you will get the read-only value
+    model
+
+
+let view model =
+    VStack() {
+        MediaElement(...)
+        .reference(mediaElementRef)
+    }
+```
 
 ## Other useful links:
 - [The official Fabulous website](https://fabulous.dev)

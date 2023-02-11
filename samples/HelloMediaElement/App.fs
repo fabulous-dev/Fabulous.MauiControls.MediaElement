@@ -44,20 +44,12 @@ module App =
                             .font(size = 18.)
                             .centerTextHorizontal()
 
-                        MediaElement("https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4")
+                        MediaElement()
+                            .source("https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4")
                             .heightRequest(300)
                             .widthRequest(400)
                             .shouldAutoPlay(true)
-                        
-                        let text =
-                            if model.Count = 0 then
-                                "Click me"
-                            else
-                                $"Clicked {model.Count} times"
 
-                        Button(text, Clicked)
-                            .semantics(hint = "Counts the number of times you click")
-                            .centerHorizontal()
                     })
                         .padding(Thickness(30., 0., 30., 0.))
                         .centerVertical()
