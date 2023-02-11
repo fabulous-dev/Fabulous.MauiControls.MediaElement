@@ -6,14 +6,12 @@ open Fabulous
 open Microsoft.Maui
 open Fabulous.Maui
 
-
 type IFabMediaElement =
     inherit IFabView
 
 module MediaElement =
     let WidgetKey = Widgets.register<MediaElement>()
     
-    // https://learn.microsoft.com/en-us/dotnet/communitytoolkit/maui/views/mediaelement#properties
      
     let Aspect = Attributes.defineBindableEnum<Aspect> MediaElement.AspectProperty
     

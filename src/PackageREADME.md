@@ -1,1 +1,1 @@
-Microsoft.Maui.Controls.Maps implementation for Fabulous.MauiControls
+CommunityToolkit.Maui.MediaElement implementation for Fabulous.MauiControls
