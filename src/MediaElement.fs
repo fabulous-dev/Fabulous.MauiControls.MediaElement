@@ -1,6 +1,7 @@
 ﻿namespace Fabulous.MauiControls.MediaElement
 
 open System.Runtime.CompilerServices
+open CommunityToolkit.Maui.Core.Primitives
 open CommunityToolkit.Maui.Views
 open Fabulous
 open Fabulous.StackAllocatedCollections.StackList
@@ -29,6 +30,19 @@ module MediaElement =
     let Speed = Attributes.defineBindableFloat MediaElement.SpeedProperty
 
     let Volume = Attributes.defineBindableFloat MediaElement.VolumeProperty
+    
+    // ---- Events -----
+    
+    let MediaOpened = Attributes.defineEventNoArg "MediaElement_MediaOpened" (fun target -> (target :?> MediaElement).MediaOpened)
+    
+    let MediaEnded = Attributes.defineEventNoArg "MediaElement_MediaEnded" (fun target -> (target :?> MediaElement).MediaEnded)
+    
+    let MediaFailed = Attributes.defineEvent<MediaFailedEventArgs> "MediaElement_MediaFailed" (fun target -> (target :?> MediaElement).MediaFailed)
+    
+    let PositionChanged = Attributes.defineEvent<MediaPositionChangedEventArgs> "MediaElement_PositionChanged" (fun target -> (target :?> MediaElement).PositionChanged)
+   
+    let SeekCompleted = Attributes.defineEventNoArg "MediaElement_SeekCompleted" (fun target -> (target :?> MediaElement).SeekCompleted) 
+    
 
 [<AutoOpen>]
 module MediaElementBuilders =
@@ -87,3 +101,41 @@ type MediaElementModifiers =
     [<Extension>]
     static member inline reference(this: WidgetBuilder<'msg, IFabMediaElement>, value: ViewRef<MediaElement>) =
         this.AddScalar(ViewRefAttributes.ViewRef.WithValue(value.Unbox))
+        
+        
+    // ---- Event Listeners ----
+    
+    /// <summary>Listen to the OnMediaOpened event</summary>
+    /// <param name="this">Current widget</param>
+    /// <param name="msg">Message to dispatch</param>
+    [<Extension>]
+    static member inline onMediaOpened(this: WidgetBuilder<'msg, #IFabMediaElement>, msg: 'msg) =
+        this.AddScalar(MediaElement.MediaOpened.WithValue(msg))
+        
+    /// <summary>Listen to the OnMediaOpened event</summary>
+    /// <param name="this">Current widget</param>
+    /// <param name="msg">Message to dispatch</param>
+    [<Extension>]
+    static member inline onMediaEnded(this: WidgetBuilder<'msg, #IFabMediaElement>, msg: 'msg) =
+        this.AddScalar(MediaElement.MediaEnded.WithValue(msg))
+        
+    /// <summary>Listen to the OnMediaFailed event</summary>
+    /// <param name="this">Current widget</param>
+    /// <param name="msg">Message to dispatch</param>
+    [<Extension>]
+    static member inline onMediaFailed(this: WidgetBuilder<'msg, #IFabMediaElement>, fn: MediaFailedEventArgs -> 'msg) =
+        this.AddScalar(MediaElement.MediaFailed.WithValue(fun args -> fn args |> box))
+        
+    /// <summary>Listen to the OnPositionChanged event</summary>
+    /// <param name="this">Current widget</param>
+    /// <param name="msg">Message to dispatch</param>
+    [<Extension>]
+    static member inline onPositionChanged(this: WidgetBuilder<'msg, #IFabMediaElement>, fn: MediaPositionChangedEventArgs -> 'msg) =
+        this.AddScalar(MediaElement.PositionChanged.WithValue(fun args -> fn args |> box))
+    
+    /// <summary>Listen to the SeekCompleted event</summary>
+    /// <param name="this">Current widget</param>
+    /// <param name="msg">Message to dispatch</param>
+    [<Extension>]
+    static member inline onSeekCompleted(this: WidgetBuilder<'msg, #IFabMediaElement>, msg: 'msg) =
+        this.AddScalar(MediaElement.SeekCompleted.WithValue(msg)) 
