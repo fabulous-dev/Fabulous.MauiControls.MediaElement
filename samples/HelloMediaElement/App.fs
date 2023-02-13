@@ -4,29 +4,22 @@ open Fabulous
 open Fabulous.Maui
 open Fabulous.MauiControls.MediaElement
 open Microsoft.Maui
-open Microsoft.Maui.Accessibility
 
 open type Fabulous.Maui.View
 
 module App =
-    type Model = { Count: int }
+    type Model = { LastEvent: string }
 
-    type Msg = | Clicked
+    type Msg =
+        | MediaEnded
+        | PositionChanged of string
 
-    type CmdMsg = SemanticAnnounce of string
-
-    let semanticAnnounce text =
-        Cmd.ofSub(fun _ -> SemanticScreenReader.Announce(text))
-
-    let mapCmd cmdMsg =
-        match cmdMsg with
-        | SemanticAnnounce text -> semanticAnnounce text
-
-    let init () = { Count = 0 }, []
+    let init () = { LastEvent = "No events yet" }, []
 
     let update msg model =
         match msg with
-        | Clicked -> { model with Count = model.Count + 1 }, [ SemanticAnnounce $"Clicked {model.Count} times" ]
+        | MediaEnded -> { model with LastEvent = "Media Ended" }, Cmd.none
+        | PositionChanged s -> { model with LastEvent = "Position Changed to " + s }, Cmd.none
 
     let view model =
         Application(
@@ -49,6 +42,13 @@ module App =
                             .height(300)
                             .width(400)
                             .shouldAutoPlay(true)
+                            .onMediaEnded(MediaEnded)
+                            .onPositionChanged(fun x -> PositionChanged (x.Position.ToString("c")))
+                         
+                        Label("Last Event: " + model.LastEvent)
+                            .font(size = 14.)
+                            .centerTextHorizontal()   
+                            
 
                     })
                         .padding(Thickness(30., 0., 30., 0.))
@@ -57,4 +57,4 @@ module App =
             )
         )
 
-    let program = Program.statefulWithCmdMsg init update view mapCmd
+    let program = Program.statefulWithCmd init update view
