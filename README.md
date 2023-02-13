@@ -10,11 +10,11 @@ The most basic functionality of the `MediaElement` works well on Android and iOS
 #### Done
 - All (non read-only) bindable properties of the MediaElement have been implemented (https://learn.microsoft.com/en-us/dotnet/communitytoolkit/maui/views/mediaelement#properties)
 - Read-only bindable properties can be accessed through the reference property via a `ViewRef` (see below)
+- All Events have been implemented (https://learn.microsoft.com/en-us/dotnet/communitytoolkit/maui/views/mediaelement#events)?
 
 #### TODO
 - Implement functionality/methods to control the media element externally/programatically i.e. from outside of the built-in UI controls of the media element (https://learn.microsoft.com/en-us/dotnet/communitytoolkit/maui/views/mediaelement#methods).
 - Use a `MediaSource` type instead of string for the `Source` property?
-- Implement Events (https://learn.microsoft.com/en-us/dotnet/communitytoolkit/maui/views/mediaelement#events)?
 - Docs
 - More examples
 
