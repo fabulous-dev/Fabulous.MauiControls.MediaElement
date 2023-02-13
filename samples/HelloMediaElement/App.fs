@@ -12,14 +12,16 @@ module App =
 
     type Msg =
         | MediaEnded
-        | PositionChanged of string
+        | MediaOpened
+        | PositionChanged of System.TimeSpan
 
     let init () = { LastEvent = "No events yet" }, []
 
     let update msg model =
         match msg with
         | MediaEnded -> { model with LastEvent = "Media Ended" }, Cmd.none
-        | PositionChanged s -> { model with LastEvent = "Position Changed to " + s }, Cmd.none
+        | MediaOpened -> { model with LastEvent = "Media Opened" }, Cmd.none
+        | PositionChanged t -> { model with LastEvent = "Position Changed to " + t.ToString("c") }, Cmd.none
 
     let view model =
         Application(
@@ -42,10 +44,11 @@ module App =
                             .height(300)
                             .width(400)
                             .shouldAutoPlay(true)
+                            .onMediaOpened(MediaOpened)
                             .onMediaEnded(MediaEnded)
-                            .onPositionChanged(fun x -> PositionChanged (x.Position.ToString("c")))
+                            .onPositionChanged(fun x -> PositionChanged (x.Position))
                          
-                        Label("Last Event: " + model.LastEvent)
+                        Label("Latest Event: " + model.LastEvent)
                             .font(size = 14.)
                             .centerTextHorizontal()   
                             
