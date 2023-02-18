@@ -7,14 +7,70 @@ open Fabulous
 open Fabulous.StackAllocatedCollections.StackList
 open Microsoft.Maui
 open Fabulous.Maui
+open System
+open Microsoft.Maui.Controls
 
 type IFabMediaElement =
     inherit IFabView
     inherit IFabVisualElement
 
+// TODO: seekTo(position: TimeSpan)
+type MediaElementController() =
+    let play = Event<EventHandler, EventArgs>()
+    let pause = Event<EventHandler, EventArgs>()
+    let stop = Event<EventHandler, EventArgs>()
+
+    [<CLIEvent>]
+    member _.Play = play.Publish
+
+    [<CLIEvent>]
+    member _.Pause = pause.Publish
+     
+    [<CLIEvent>]
+    member _.Stop = stop.Publish
+
+    member this.DoPlay() = play.Trigger(this, EventArgs.Empty)
+    member this.DoPause() = pause.Trigger(this, EventArgs.Empty)
+    member this.DoStop() = stop.Trigger(this, EventArgs.Empty)
+    
+
+// We need to implement a custom MediaElement to support the Controller
+type CustomMediaElement() as this =
+    inherit MediaElement()
+   
+    let _playHandler = EventHandler(this.CustomPlay)
+    let _pauseHandler = EventHandler(this.CustomPause)
+    let _stopHandler = EventHandler(this.CustomStop)
+    
+    let mutable _oldController: MediaElementController option = None
+    member this.Controller
+        with get () = _oldController
+        and set (newController: MediaElementController option) =
+            match newController with
+            | Some controller ->
+                controller.Play.AddHandler(_playHandler)
+                controller.Pause.AddHandler(_pauseHandler)
+                controller.Pause.AddHandler(_stopHandler)
+                _oldController <- Some controller
+            | None -> _oldController <- None
+
+    member private this.CustomPlay _ _ = this.Play()
+    member private this.CustomPause _ _ = this.Pause()
+    member private this.CustomStop _ _ = this.Stop()
+
 module MediaElement =
     let WidgetKey = Widgets.register<MediaElement>()
-    
+   
+    let inline defineProperty<'T when 'T: equality> name (defaultValue: 'T) (setter: obj -> 'T -> unit) =
+        Attributes.defineSimpleScalarWithEquality<'T> name (fun _ newValueOpt node ->
+            let target = node.Target :?> BindableProperty
+
+            match newValueOpt with
+            | ValueNone -> setter target defaultValue
+            | ValueSome v -> setter target v)
+   
+    let Controller = defineProperty "MediaElement_Controller" None (fun target value -> (target :?> CustomMediaElement).Controller <- value)
+     
     let Aspect = Attributes.defineBindableEnum<Aspect> MediaElement.AspectProperty
 
     let ShouldAutoPlay = Attributes.defineBindableBool MediaElement.ShouldAutoPlayProperty 
@@ -101,7 +157,12 @@ type MediaElementModifiers =
     [<Extension>]
     static member inline reference(this: WidgetBuilder<'msg, IFabMediaElement>, value: ViewRef<MediaElement>) =
         this.AddScalar(ViewRefAttributes.ViewRef.WithValue(value.Unbox))
-        
+       
+    [<Extension>]
+    static member inline controller(this: WidgetBuilder<'msg, #IFabMediaElement>, value: MediaElementController) =
+        this.AddScalar(MediaElement.Controller.WithValue(Some value)) 
+       
+       
         
     // ---- Event Listeners ----
     
