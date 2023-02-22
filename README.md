@@ -1,54 +1,13 @@
-## MediaElement for Fabulous.MauiControls (Work In Progress)
+## MediaElement for Fabulous.MauiControls (Work in Progress)
 
 Fabulous.MauiControls implementation of https://learn.microsoft.com/en-us/dotnet/communitytoolkit/maui/views/mediaelement
 
-### Status
-
-#### Summary
-The most basic functionality of the `MediaElement` works well on Android and iOS (with a workaround for a bug in the CommunityToolkit on iOS - see below).
-
-#### Done
-- All (non read-only) bindable properties of the MediaElement have been implemented (https://learn.microsoft.com/en-us/dotnet/communitytoolkit/maui/views/mediaelement#properties)
-- Read-only bindable properties can be accessed through the reference property via a `ViewRef` (see below)
-- All Events have been implemented (https://learn.microsoft.com/en-us/dotnet/communitytoolkit/maui/views/mediaelement#events)?
+The MediaElement is now basically fully featured, but lacking in documentation and with the following TODOs:
 
 #### TODO
-- Implement functionality/methods to control the media element externally/programatically i.e. from outside of the built-in UI controls of the media element (https://learn.microsoft.com/en-us/dotnet/communitytoolkit/maui/views/mediaelement#methods).
-- Use a `MediaSource` type instead of string for the `Source` property?
+- Possibly change the API to Use a `MediaSource` type instead of string for the `Source` property?
 - Docs
 - More examples
-
-## Known Issues
-
-Currently doesn't work as expected on iOS because of issue on iOS due to bug in Community Toolkit's MediaElement. 
-
-In particular, when the `MediaElement` is added to the initial view, it will crash on iOS because it's expecting some initialization process that comes later in the lifecycle.
-
-A workaround is to add the `MediaElement` later.
-
-```fsharp
-type Msg = AppLoaded
-type Model = { IsAppLoaded: bool }
-
-let init() = { IsAppLoaded = false }
-
-let update msg model =
-    match msg with
-    | AppLoaded -> { model with IsAppLoaded = true }
-
-let view model =
-    Application(
-        ContentPage(
-            VStack() {
-            if model.IsAppLoaded then
-            MediaElement(...)
-            }
-        )
-    )
-    .onStart(AppLoaded)
-```
-
-We reported the issue on the Community Toolkit repository: https://github.com/CommunityToolkit/Maui/issues/959
 
 ## Using the MediaElement 
 
@@ -57,6 +16,18 @@ MediaElement is a cross-platform control for playing video and audio. You can fi
 Please see the `HelloMediaElement` sample app in this repo to see a working example.
 
 TODO: add usage section, similar to the corresponding section in Maps.
+
+### Binding to the MediaElement's properties
+
+TODO
+
+### Binding to the MediaElement's events
+
+TODO
+
+### Using a controller to access the MediaElement's methods
+
+TODO
 
 ### Accessing read-only bindable properties
 
