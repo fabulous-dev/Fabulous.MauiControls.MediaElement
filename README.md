@@ -1,9 +1,11 @@
-## MediaElement for Fabulous.MauiControls
+## MediaElement for Fabulous.MauiControls (Work in Progress)
 
 Fabulous.MauiControls implementation of https://learn.microsoft.com/en-us/dotnet/communitytoolkit/maui/views/mediaelement
 
+The MediaElement is now basically fully featured, but lacking in documentation and with the following TODOs:
+
 #### TODO
-- Use a `MediaSource` type instead of string for the `Source` property?
+- Possibly change the API to Use a `MediaSource` type instead of string for the `Source` property?
 - Docs
 - More examples
 
@@ -15,7 +17,17 @@ Please see the `HelloMediaElement` sample app in this repo to see a working exam
 
 TODO: add usage section, similar to the corresponding section in Maps.
 
+### Binding to the MediaElement's properties
 
+TODO
+
+### Binding to the MediaElement's events
+
+TODO
+
+### Using a controller to access the MediaElement's methods
+
+TODO
 
 ### Accessing read-only bindable properties
 
