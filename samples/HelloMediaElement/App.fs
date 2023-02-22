@@ -1,5 +1,6 @@
 namespace HelloMediaElement
 
+open System
 open Fabulous
 open Fabulous.Maui
 open Fabulous.MauiControls.MediaElement
@@ -15,6 +16,8 @@ module App =
         | MediaOpened
         | PauseVideoRequested
         | PositionChanged of System.TimeSpan
+        | SeekTo5MinsRequested
+        | SeekTo5MinsCompleted
         | StartVideoRequested
         | VideoPaused
         | VideoStarted
@@ -25,15 +28,22 @@ module App =
 
     let pauseVideoCmd () =
         async {
-            do controller.DoPause()
+            do controller.Pause()
             return VideoPaused
         }
         |> Cmd.ofAsyncMsg
     
     let startVideoCmd () =
         async {
-            do controller.DoPlay()
+            do controller.Play()
             return VideoStarted
+        }
+        |> Cmd.ofAsyncMsg
+        
+    let seekTo3MinsCmd () =
+        async {
+            do controller.SeekTo(TimeSpan.FromMinutes(5))
+            return SeekTo5MinsCompleted
         }
         |> Cmd.ofAsyncMsg
 
@@ -43,6 +53,8 @@ module App =
         | MediaOpened -> { model with LastEvent = "Media Opened" }, Cmd.none
         | PauseVideoRequested -> model, pauseVideoCmd()
         | PositionChanged t -> { model with LastEvent = "Position Changed to " + t.ToString("c") }, Cmd.none
+        | SeekTo5MinsRequested -> model, seekTo3MinsCmd()
+        | SeekTo5MinsCompleted -> { model with LastEvent = "Seek To 5 mins Completed" }, Cmd.none
         | StartVideoRequested -> model, startVideoCmd()
         | VideoPaused -> model, Cmd.none
         | VideoStarted -> model, Cmd.none
@@ -53,13 +65,13 @@ module App =
                 ScrollView(
                     (VStack(spacing = 25.) {
 
-                        Label("Media element proof of concept")
+                        Label(".NET MAUI Media Element")
                             .semantics(SemanticHeadingLevel.Level1)
-                            .font(size = 32.)
+                            .font(size = 24.)
                             .centerTextHorizontal()
 
-                        Label("Welcome to .NET Multi-platform App UI powered by Fabulous")
-                            .semantics(SemanticHeadingLevel.Level2, "Welcome to dot net Multi platform App U I powered by Fabulous")
+                        Label("Powered by Fabulous")
+                            .semantics(SemanticHeadingLevel.Level2)
                             .font(size = 18.)
                             .centerTextHorizontal()
 
@@ -80,6 +92,7 @@ module App =
 
                         Button("Start video", StartVideoRequested)
                         Button("Pause video", PauseVideoRequested)
+                        Button("Seek to 5 mins", SeekTo5MinsRequested)
                     })
                         .padding(Thickness(30., 0., 30., 0.))
                         .centerVertical()

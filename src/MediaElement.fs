@@ -13,24 +13,28 @@ type IFabMediaElement =
     inherit IFabView
     inherit IFabVisualElement
 
-// TODO: seekTo(position: TimeSpan)
 type MediaElementController() =
-    let play = Event<EventHandler, EventArgs>()
-    let pause = Event<EventHandler, EventArgs>()
-    let stop = Event<EventHandler, EventArgs>()
+    let playRequested = Event<EventHandler, EventArgs>()
+    let pauseRequested = Event<EventHandler, EventArgs>()
+    let seekToRequested = Event<EventHandler, EventArgs>()
+    let stopRequested = Event<EventHandler, EventArgs>()
 
     [<CLIEvent>]
-    member _.Play = play.Publish
+    member _.PlayRequested = playRequested.Publish
 
     [<CLIEvent>]
-    member _.Pause = pause.Publish
+    member _.PauseRequested = pauseRequested.Publish
 
     [<CLIEvent>]
-    member _.Stop = stop.Publish
+    member _.SeekToRequested = seekToRequested.Publish
 
-    member this.DoPlay() = play.Trigger(this, EventArgs.Empty)
-    member this.DoPause() = pause.Trigger(this, EventArgs.Empty)
-    member this.DoStop() = stop.Trigger(this, EventArgs.Empty)
+    [<CLIEvent>]
+    member _.StopRequested = stopRequested.Publish
+
+    member this.Play() = playRequested.Trigger(this, EventArgs.Empty)
+    member this.Pause() = pauseRequested.Trigger(this, EventArgs.Empty)
+    member this.SeekTo(position: TimeSpan) = seekToRequested.Trigger(this, MediaPositionChangedEventArgs(position))
+    member this.Stop() = stopRequested.Trigger(this, EventArgs.Empty)
 
 // We need to implement a custom MediaElement to support the Controller
 type CustomMediaElement() as this =
@@ -38,6 +42,7 @@ type CustomMediaElement() as this =
 
     let _playHandler = EventHandler(this.CustomPlay)
     let _pauseHandler = EventHandler(this.CustomPause)
+    let _seekToHandler = EventHandler(this.CustomSeekTo)
     let _stopHandler = EventHandler(this.CustomStop)
 
     let mutable _controller: MediaElementController option = None
@@ -48,18 +53,23 @@ type CustomMediaElement() as this =
             if _controller <> value then
                 // Unsubscribe the old controller
                 if _controller.IsSome then
-                    _controller.Value.Play.RemoveHandler(_playHandler)
-                    _controller.Value.Pause.RemoveHandler(_pauseHandler)
-                    _controller.Value.Stop.RemoveHandler(_stopHandler)
+                    _controller.Value.PlayRequested.RemoveHandler(_playHandler)
+                    _controller.Value.PauseRequested.RemoveHandler(_pauseHandler)
+                    _controller.Value.SeekToRequested.RemoveHandler(_seekToHandler)
+                    _controller.Value.StopRequested.RemoveHandler(_stopHandler)
 
                 // Subscribe the new controller
                 _controller <- value
-                _controller.Value.Play.AddHandler(this.CustomPlay)
-                _controller.Value.Pause.AddHandler(this.CustomPause)
-                _controller.Value.Stop.AddHandler(this.CustomStop)
+                _controller.Value.PlayRequested.AddHandler(this.CustomPlay)
+                _controller.Value.PauseRequested.AddHandler(this.CustomPause)
+                _controller.Value.SeekToRequested.AddHandler(this.CustomSeekTo)
+                _controller.Value.StopRequested.AddHandler(this.CustomStop)
 
     member private this.CustomPlay _ _ = this.Play()
     member private this.CustomPause _ _ = this.Pause()
+    member private this.CustomSeekTo _ eventArgs =
+        let positionArgs = eventArgs :?> MediaPositionChangedEventArgs 
+        this.SeekTo(positionArgs.Position)
     member private this.CustomStop _ _ = this.Stop()
 
 module MediaElement =
