@@ -72,6 +72,7 @@ module App =
                             .onMediaEnded(MediaEnded)
                             .onPositionChanged(fun x -> PositionChanged(x.Position))
                             .controller(controller)
+                          
 
                         Label("Latest Event: " + model.LastEvent)
                             .font(size = 14.)

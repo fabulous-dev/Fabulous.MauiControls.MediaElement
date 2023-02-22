@@ -73,6 +73,8 @@ module MediaElement =
 
     let ShouldLoopPlayback = Attributes.defineBindableBool MediaElement.ShouldLoopPlaybackProperty
 
+    let ShouldMute = Attributes.defineBindableBool MediaElement.ShouldMuteProperty
+    
     let ShouldKeepScreenOn = Attributes.defineBindableBool MediaElement.ShouldKeepScreenOnProperty
     
     let ShouldShowPlaybackControls = Attributes.defineBindableBool MediaElement.ShowsPlaybackControlsProperty
@@ -125,6 +127,10 @@ type MediaElementModifiers =
     static member inline shouldLoopPlayback(this: WidgetBuilder<'msg, #IFabMediaElement>, value: bool) =
         this.AddScalar(MediaElement.ShouldLoopPlayback.WithValue(value))
 
+    [<Extension>]
+    static member inline shouldMute(this: WidgetBuilder<'msg, #IFabMediaElement>, value: bool) =
+        this.AddScalar(MediaElement.ShouldMute.WithValue(value))
+    
     [<Extension>]
     static member inline shouldKeepScreenOn(this: WidgetBuilder<'msg, #IFabMediaElement>, value: bool) =
         this.AddScalar(MediaElement.ShouldKeepScreenOn.WithValue(value))

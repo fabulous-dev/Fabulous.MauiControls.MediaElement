@@ -13,7 +13,6 @@ The most basic functionality of the `MediaElement` works well on Android and iOS
 - All Events have been implemented (https://learn.microsoft.com/en-us/dotnet/communitytoolkit/maui/views/mediaelement#events)?
 
 #### TODO
-- Implement functionality/methods to control the media element externally/programatically i.e. from outside of the built-in UI controls of the media element (https://learn.microsoft.com/en-us/dotnet/communitytoolkit/maui/views/mediaelement#methods).
 - Use a `MediaSource` type instead of string for the `Source` property?
 - Docs
 - More examples
