@@ -8,13 +8,9 @@ open Microsoft.Maui
 open type Fabulous.Maui.View
 
 module App =
-    type Model = {
-        IsAppLoaded: bool
-        LastEvent: string
-    }
+    type Model = { LastEvent: string }
 
     type Msg =
-        | AppLoaded
         | MediaEnded
         | MediaOpened
         | PauseVideoRequested
@@ -23,28 +19,26 @@ module App =
         | VideoPaused
         | VideoStarted
 
-    let init () = { IsAppLoaded = false ; LastEvent = "No events yet" }, []
+    let init () = { LastEvent = "No events yet" }, []
 
     let controller = MediaElementController()
-    
-    let pauseVideoCmd () = 
+
+    let pauseVideoCmd () =
         async {
             do controller.DoPause()
             return VideoPaused
         }
         |> Cmd.ofAsyncMsg
-        
-    let startVideoCmd () = 
+    
+    let startVideoCmd () =
         async {
             do controller.DoPlay()
             return VideoStarted
         }
         |> Cmd.ofAsyncMsg
 
-    
     let update msg model =
         match msg with
-        | AppLoaded -> { model with IsAppLoaded = true }, Cmd.none
         | MediaEnded -> { model with LastEvent = "Media Ended" }, Cmd.none
         | MediaOpened -> { model with LastEvent = "Media Opened" }, Cmd.none
         | PauseVideoRequested -> model, pauseVideoCmd()
@@ -52,7 +46,6 @@ module App =
         | StartVideoRequested -> model, startVideoCmd()
         | VideoPaused -> model, Cmd.none
         | VideoStarted -> model, Cmd.none
-        
 
     let view model =
         Application(
@@ -70,31 +63,27 @@ module App =
                             .font(size = 18.)
                             .centerTextHorizontal()
 
-                        if model.IsAppLoaded then
-                          MediaElement()
+                        MediaElement()
                             .source("https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4")
                             .height(300)
                             .width(400)
                             .shouldAutoPlay(true)
                             .onMediaOpened(MediaOpened)
                             .onMediaEnded(MediaEnded)
-                            .onPositionChanged(fun x -> PositionChanged (x.Position))
-                            // TODO: fix this - uncommenting the controller crashes the app at startup
-                            // .controller(controller) 
-                        
+                            .onPositionChanged(fun x -> PositionChanged(x.Position))
+                            .controller(controller)
+
                         Label("Latest Event: " + model.LastEvent)
                             .font(size = 14.)
                             .centerTextHorizontal()
-                            
+
                         Button("Start video", StartVideoRequested)
                         Button("Pause video", PauseVideoRequested)
-                            
-
                     })
                         .padding(Thickness(30., 0., 30., 0.))
                         .centerVertical()
                 )
             )
-        ).onStart(AppLoaded)
+        )
 
     let program = Program.statefulWithCmd init update view

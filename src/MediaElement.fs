@@ -8,7 +8,6 @@ open Fabulous.StackAllocatedCollections.StackList
 open Microsoft.Maui
 open Fabulous.Maui
 open System
-open Microsoft.Maui.Controls
 
 type IFabMediaElement =
     inherit IFabView
@@ -25,52 +24,49 @@ type MediaElementController() =
 
     [<CLIEvent>]
     member _.Pause = pause.Publish
-     
+
     [<CLIEvent>]
     member _.Stop = stop.Publish
 
     member this.DoPlay() = play.Trigger(this, EventArgs.Empty)
     member this.DoPause() = pause.Trigger(this, EventArgs.Empty)
     member this.DoStop() = stop.Trigger(this, EventArgs.Empty)
-    
 
 // We need to implement a custom MediaElement to support the Controller
 type CustomMediaElement() as this =
     inherit MediaElement()
-   
+
     let _playHandler = EventHandler(this.CustomPlay)
     let _pauseHandler = EventHandler(this.CustomPause)
     let _stopHandler = EventHandler(this.CustomStop)
-    
-    let mutable _oldController: MediaElementController option = None
+
+    let mutable _controller: MediaElementController option = None
+
     member this.Controller
-        with get () = _oldController
-        and set (newController: MediaElementController option) =
-            match newController with
-            | Some controller ->
-                controller.Play.AddHandler(_playHandler)
-                controller.Pause.AddHandler(_pauseHandler)
-                controller.Pause.AddHandler(_stopHandler)
-                _oldController <- Some controller
-            | None -> _oldController <- None
+        with get () = _controller
+        and set value =
+            if _controller <> value then
+                // Unsubscribe the old controller
+                if _controller.IsSome then
+                    _controller.Value.Play.RemoveHandler(_playHandler)
+                    _controller.Value.Pause.RemoveHandler(_pauseHandler)
+                    _controller.Value.Stop.RemoveHandler(_stopHandler)
+
+                // Subscribe the new controller
+                _controller <- value
+                _controller.Value.Play.AddHandler(this.CustomPlay)
+                _controller.Value.Pause.AddHandler(this.CustomPause)
+                _controller.Value.Stop.AddHandler(this.CustomStop)
 
     member private this.CustomPlay _ _ = this.Play()
     member private this.CustomPause _ _ = this.Pause()
     member private this.CustomStop _ _ = this.Stop()
 
 module MediaElement =
-    let WidgetKey = Widgets.register<MediaElement>()
-   
-    let inline defineProperty<'T when 'T: equality> name (defaultValue: 'T) (setter: obj -> 'T -> unit) =
-        Attributes.defineSimpleScalarWithEquality<'T> name (fun _ newValueOpt node ->
-            let target = node.Target :?> BindableProperty
+    let WidgetKey = Widgets.register<CustomMediaElement>()
 
-            match newValueOpt with
-            | ValueNone -> setter target defaultValue
-            | ValueSome v -> setter target v)
-   
-    let Controller = defineProperty "MediaElement_Controller" None (fun target value -> (target :?> CustomMediaElement).Controller <- value)
-     
+    let Controller =
+        Attributes.defineProperty "MediaElement_Controller" None (fun target value -> (target :?> CustomMediaElement).Controller <- value)
     let Aspect = Attributes.defineBindableEnum<Aspect> MediaElement.AspectProperty
 
     let ShouldAutoPlay = Attributes.defineBindableBool MediaElement.ShouldAutoPlayProperty 
@@ -103,15 +99,13 @@ module MediaElement =
 [<AutoOpen>]
 module MediaElementBuilders =
     type Fabulous.Maui.View with
-       
-        /// <summary>MediaElement is a cross-platform control for playing video and audio.</summary> 
-        [<Extension>] 
-        static member MediaElement() =
+
+        /// <summary>MediaElement is a cross-platform control for playing video and audio.</summary>
+        static member MediaElement<'msg>() =
             WidgetBuilder<'msg, IFabMediaElement>(MediaElement.WidgetKey, AttributesBundle(StackList.empty(), ValueNone, ValueNone))
         
         /// <summary>MediaElement is a cross-platform control for playing video and audio.</summary>
         /// <param name ="source">The source of the media loaded into the control.</param> 
-        [<Extension>]
         static member inline MediaElement<'msg>(source: string) =
             WidgetBuilder<'msg, IFabMediaElement>(MediaElement.WidgetKey, MediaElement.Source.WithValue(source))
             
