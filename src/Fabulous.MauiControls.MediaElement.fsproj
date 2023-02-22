@@ -16,13 +16,14 @@
     <ItemGroup>
         <None Include="PackageREADME.md" Pack="true" PackagePath="\" />
         <None Include="../logo/nuget-icon.png" Pack="true" PackagePath="\" />
+        <Compile Include="Attributes.fs" />
         <Compile Include="MediaElement.fs" />
         <Compile Include="AppHostBuilderExtensions.fs" />
     </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="CommunityToolkit.Maui" Version="4.0.0" />
-        <PackageReference Include="CommunityToolkit.Maui.MediaElement" Version="1.0.1" />
+        <PackageReference Include="CommunityToolkit.Maui.MediaElement" Version="1.0.2" />
         <PackageReference Include="Fabulous.MauiControls" Version="2.2.0" />
     </ItemGroup>
 

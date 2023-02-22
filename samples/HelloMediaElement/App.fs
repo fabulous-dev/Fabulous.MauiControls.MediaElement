@@ -13,15 +13,39 @@ module App =
     type Msg =
         | MediaEnded
         | MediaOpened
+        | PauseVideoRequested
         | PositionChanged of System.TimeSpan
+        | StartVideoRequested
+        | VideoPaused
+        | VideoStarted
 
     let init () = { LastEvent = "No events yet" }, []
+
+    let controller = MediaElementController()
+
+    let pauseVideoCmd () =
+        async {
+            do controller.DoPause()
+            return VideoPaused
+        }
+        |> Cmd.ofAsyncMsg
+    
+    let startVideoCmd () =
+        async {
+            do controller.DoPlay()
+            return VideoStarted
+        }
+        |> Cmd.ofAsyncMsg
 
     let update msg model =
         match msg with
         | MediaEnded -> { model with LastEvent = "Media Ended" }, Cmd.none
         | MediaOpened -> { model with LastEvent = "Media Opened" }, Cmd.none
+        | PauseVideoRequested -> model, pauseVideoCmd()
         | PositionChanged t -> { model with LastEvent = "Position Changed to " + t.ToString("c") }, Cmd.none
+        | StartVideoRequested -> model, startVideoCmd()
+        | VideoPaused -> model, Cmd.none
+        | VideoStarted -> model, Cmd.none
 
     let view model =
         Application(
@@ -46,13 +70,15 @@ module App =
                             .shouldAutoPlay(true)
                             .onMediaOpened(MediaOpened)
                             .onMediaEnded(MediaEnded)
-                            .onPositionChanged(fun x -> PositionChanged (x.Position))
-                         
+                            .onPositionChanged(fun x -> PositionChanged(x.Position))
+                            .controller(controller)
+
                         Label("Latest Event: " + model.LastEvent)
                             .font(size = 14.)
-                            .centerTextHorizontal()   
-                            
+                            .centerTextHorizontal()
 
+                        Button("Start video", StartVideoRequested)
+                        Button("Pause video", PauseVideoRequested)
                     })
                         .padding(Thickness(30., 0., 30., 0.))
                         .centerVertical()

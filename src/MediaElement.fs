@@ -7,14 +7,66 @@ open Fabulous
 open Fabulous.StackAllocatedCollections.StackList
 open Microsoft.Maui
 open Fabulous.Maui
+open System
 
 type IFabMediaElement =
     inherit IFabView
     inherit IFabVisualElement
 
+// TODO: seekTo(position: TimeSpan)
+type MediaElementController() =
+    let play = Event<EventHandler, EventArgs>()
+    let pause = Event<EventHandler, EventArgs>()
+    let stop = Event<EventHandler, EventArgs>()
+
+    [<CLIEvent>]
+    member _.Play = play.Publish
+
+    [<CLIEvent>]
+    member _.Pause = pause.Publish
+
+    [<CLIEvent>]
+    member _.Stop = stop.Publish
+
+    member this.DoPlay() = play.Trigger(this, EventArgs.Empty)
+    member this.DoPause() = pause.Trigger(this, EventArgs.Empty)
+    member this.DoStop() = stop.Trigger(this, EventArgs.Empty)
+
+// We need to implement a custom MediaElement to support the Controller
+type CustomMediaElement() as this =
+    inherit MediaElement()
+
+    let _playHandler = EventHandler(this.CustomPlay)
+    let _pauseHandler = EventHandler(this.CustomPause)
+    let _stopHandler = EventHandler(this.CustomStop)
+
+    let mutable _controller: MediaElementController option = None
+
+    member this.Controller
+        with get () = _controller
+        and set value =
+            if _controller <> value then
+                // Unsubscribe the old controller
+                if _controller.IsSome then
+                    _controller.Value.Play.RemoveHandler(_playHandler)
+                    _controller.Value.Pause.RemoveHandler(_pauseHandler)
+                    _controller.Value.Stop.RemoveHandler(_stopHandler)
+
+                // Subscribe the new controller
+                _controller <- value
+                _controller.Value.Play.AddHandler(this.CustomPlay)
+                _controller.Value.Pause.AddHandler(this.CustomPause)
+                _controller.Value.Stop.AddHandler(this.CustomStop)
+
+    member private this.CustomPlay _ _ = this.Play()
+    member private this.CustomPause _ _ = this.Pause()
+    member private this.CustomStop _ _ = this.Stop()
+
 module MediaElement =
-    let WidgetKey = Widgets.register<MediaElement>()
-    
+    let WidgetKey = Widgets.register<CustomMediaElement>()
+
+    let Controller =
+        Attributes.defineProperty "MediaElement_Controller" None (fun target value -> (target :?> CustomMediaElement).Controller <- value)
     let Aspect = Attributes.defineBindableEnum<Aspect> MediaElement.AspectProperty
 
     let ShouldAutoPlay = Attributes.defineBindableBool MediaElement.ShouldAutoPlayProperty 
@@ -47,15 +99,13 @@ module MediaElement =
 [<AutoOpen>]
 module MediaElementBuilders =
     type Fabulous.Maui.View with
-       
-        /// <summary>MediaElement is a cross-platform control for playing video and audio.</summary> 
-        [<Extension>] 
-        static member MediaElement() =
+
+        /// <summary>MediaElement is a cross-platform control for playing video and audio.</summary>
+        static member MediaElement<'msg>() =
             WidgetBuilder<'msg, IFabMediaElement>(MediaElement.WidgetKey, AttributesBundle(StackList.empty(), ValueNone, ValueNone))
         
         /// <summary>MediaElement is a cross-platform control for playing video and audio.</summary>
         /// <param name ="source">The source of the media loaded into the control.</param> 
-        [<Extension>]
         static member inline MediaElement<'msg>(source: string) =
             WidgetBuilder<'msg, IFabMediaElement>(MediaElement.WidgetKey, MediaElement.Source.WithValue(source))
             
@@ -101,7 +151,12 @@ type MediaElementModifiers =
     [<Extension>]
     static member inline reference(this: WidgetBuilder<'msg, IFabMediaElement>, value: ViewRef<MediaElement>) =
         this.AddScalar(ViewRefAttributes.ViewRef.WithValue(value.Unbox))
-        
+       
+    [<Extension>]
+    static member inline controller(this: WidgetBuilder<'msg, #IFabMediaElement>, value: MediaElementController) =
+        this.AddScalar(MediaElement.Controller.WithValue(Some value)) 
+       
+       
         
     // ---- Event Listeners ----
     
