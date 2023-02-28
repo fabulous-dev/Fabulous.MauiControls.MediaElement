@@ -2,6 +2,8 @@
 
 The MediaElement control is a cross-platform view for playing video and audio. You can find all the details about this control in the [.NET MAUI Community Toolkit Media Element documentation](https://learn.microsoft.com/en-us/dotnet/communitytoolkit/maui/views/mediaelement).
 
+![](Fabulous_MauiControls_MediaElement_Demo.gif)
+
 ### How to use
 
 Please see the `HelloMediaElement` sample app in this repo to see a working example, or follow the steps below to get up and running with the MediaElement.
