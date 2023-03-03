@@ -32,14 +32,14 @@ module App =
             return VideoPaused
         }
         |> Cmd.ofAsyncMsg
-    
+
     let startVideoCmd () =
         async {
             do controller.Play()
             return VideoStarted
         }
         |> Cmd.ofAsyncMsg
-        
+
     let seekTo3MinsCmd () =
         async {
             do controller.SeekTo(TimeSpan.FromMinutes(5))
@@ -50,11 +50,20 @@ module App =
     let update msg model =
         match msg with
         | MediaEnded -> { model with LastEvent = "Media Ended" }, Cmd.none
-        | MediaOpened -> { model with LastEvent = "Media Opened" }, Cmd.none
+        | MediaOpened ->
+            { model with
+                LastEvent = "Media Opened" },
+            Cmd.none
         | PauseVideoRequested -> model, pauseVideoCmd()
-        | PositionChanged t -> { model with LastEvent = "Position Changed to " + t.ToString("c") }, Cmd.none
+        | PositionChanged t ->
+            { model with
+                LastEvent = "Position Changed to " + t.ToString("c") },
+            Cmd.none
         | SeekTo5MinsRequested -> model, seekTo3MinsCmd()
-        | SeekTo5MinsCompleted -> { model with LastEvent = "Seek To 5 mins Completed" }, Cmd.none
+        | SeekTo5MinsCompleted ->
+            { model with
+                LastEvent = "Seek To 5 mins Completed" },
+            Cmd.none
         | StartVideoRequested -> model, startVideoCmd()
         | VideoPaused -> model, Cmd.none
         | VideoStarted -> model, Cmd.none
@@ -84,7 +93,7 @@ module App =
                             .onMediaEnded(MediaEnded)
                             .onPositionChanged(fun x -> PositionChanged(x.Position))
                             .controller(controller)
-                          
+
 
                         Label("Latest Event: " + model.LastEvent)
                             .font(size = 14.)

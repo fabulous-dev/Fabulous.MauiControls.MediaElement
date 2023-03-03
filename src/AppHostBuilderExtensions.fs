@@ -7,4 +7,5 @@ open CommunityToolkit.Maui
 [<Extension>]
 type AppHostBuilderExtensions =
     [<Extension>]
-    static member UseFabulousMediaElement(this: MauiAppBuilder) = this.UseMauiCommunityToolkitMediaElement()
+    static member UseFabulousMediaElement(this: MauiAppBuilder) =
+        this.UseMauiCommunityToolkitMediaElement()
