@@ -3,7 +3,7 @@ namespace HelloMediaElement
 open System
 open Fabulous
 open Fabulous.Maui
-open Fabulous.MauiControls.MediaElement
+open Fabulous.Maui.MediaElement
 open Microsoft.Maui
 
 open type Fabulous.Maui.View

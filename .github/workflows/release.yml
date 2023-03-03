@@ -1,17 +1,19 @@
 name: Release
 on:
   push:
-    tags: ['[0-9]+.[0-9]+.[0-9]+']
+    tags: ['[0-9]+.[0-9]+.[0-9]+', '[0-9]+.[0-9]+.[0-9]+-pre[0-9]+']
     paths-ignore: [ 'docs/**' ]
 
 permissions: write-all
 
+env:
+  CONFIG: Release
+  SLN_FILE: Fabulous.MauiControls.MediaElement.NoSamples.sln
+
 jobs:
-  build:
+  release:
     runs-on: macos-12
     environment: nuget
-    env:
-      SLN_FILE: NoSamples.sln
     steps:
     - name: Checkout sources
       uses: actions/checkout@v3
@@ -42,17 +44,15 @@ jobs:
     - name: Restore
       run: dotnet restore ${SLN_FILE}
     - name: Build
-      run: dotnet build ${SLN_FILE} -p:Version="${MAJOR}.${MINOR}.${PATCH}" --no-restore --configuration Release
-    # - name: Test
-    #   run: dotnet test ${SLN_FILE} -p:Version="${MAJOR}.${MINOR}.${PATCH}" --no-build --configuration Release
+      run: dotnet build ${SLN_FILE} -p:Version=${RELEASE_VERSION} -c ${CONFIG} --no-restore
+    - name: Test
+      run: dotnet test ${SLN_FILE} -p:Version=${RELEASE_VERSION} -c ${CONFIG} --no-build
     - name: Pack
-      run: |
-        dotnet pack ${SLN_FILE} -p:Version="${MAJOR}.${MINOR}.${PATCH}" --configuration Release --property PackageOutputPath=${PWD}/nupkgs
+      run: dotnet pack ${SLN_FILE} -p:Version=${RELEASE_VERSION} -p:PackageReleaseNotes="${{ steps.changelog_reader.outputs.changes }}" -c ${CONFIG} --no-build --property PackageOutputPath=${PWD}/nupkgs
     - name: Upload artifacts
       uses: actions/upload-artifact@v3
       with:
         name: Packages
         path: nupkgs/
     - name: Push
-      run: |
-        dotnet nuget push "nupkgs/*.nupkg" -s https://api.nuget.org/v3/index.json -k ${{ secrets.NUGET_TOKEN }} --skip-duplicate
+      run: dotnet nuget push "nupkgs/*" -s https://api.nuget.org/v3/index.json -k ${{ secrets.NUGET_TOKEN }} --skip-duplicate

@@ -1,4 +1,4 @@
-namespace Fabulous.MauiControls.MediaElement
+namespace Fabulous.Maui.MediaElement
 
 open Fabulous
 open Microsoft.Maui.Controls

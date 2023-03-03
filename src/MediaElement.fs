@@ -1,4 +1,4 @@
-﻿namespace Fabulous.MauiControls.MediaElement
+﻿namespace Fabulous.Maui.MediaElement
 
 open System.Runtime.CompilerServices
 open CommunityToolkit.Maui.Core.Primitives
