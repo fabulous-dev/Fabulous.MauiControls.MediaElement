@@ -15,7 +15,7 @@ Please see the `HelloMediaElement` sample app in this repo to see a working exam
 2: Add `.UseFabulousMediaElement()` to your MauiProgram after `.UseFabulousApp()`.
 
 ```fsharp
-open Fabulous.MauiControls.MediaElement
+open Fabulous.Maui.MediaElement
 
 type MauiProgram =
 static member CreateMauiApp() =
@@ -27,7 +27,7 @@ static member CreateMauiApp() =
         .Build()
 ```
 
-3: Open `Fabulous.MauiControls.MediaElement` at the top of the file where you declare your Fabulous program (eg. Program.stateful).
+3: Open `Fabulous.Maui.MediaElement` at the top of the file where you declare your Fabulous program (eg. Program.stateful).
 
 ```fsharp
 open Fabulous.Maui.MediaElement
