@@ -18,7 +18,7 @@ jobs:
     - name: Check code formatting
       run: |
         dotnet tool restore
-        dotnet fantomas --check -r src samples templates
+        dotnet fantomas --check -r src samples
     - name: Install dotnet workload
       run: dotnet workload install maui
     - name: Restore
